@@ -7,18 +7,16 @@ jobs:
        - checkout
        - run: 
            name: Install build dependencies
-           command: pacman -Syu && pacman -S --noconfirm cmake ninja gcc libx11 python2 p7zip git
+           command: pacman -Syu && pacman -S --noconfirm cmake gcc ninja libx11 python2 git
        - run:
            name: Enable python2
            command: mkdir -p /tmp/python_for_libwebrtc_build && ln -s /usr/bin/python2 /tmp/python_for_libwebrtc_build/python
        - run: 
            name: Run cmake
-           command: PATH=/tmp/python_for_libwebrtc_build:$PATH cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DWEBRTC_BRANCH_HEAD=refs/branch-heads/60 -DBUILD_TESTS=ON -DCMAKE_INSTALL_PREFIX=/tmp/libwebrtc_install .
+           command: PATH=/tmp/python_for_libwebrtc_build:$PATH cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release -DWEBRTC_BRANCH_HEAD=refs/branch-heads/66 .
        - run: 
            name: Build
-           command: PATH=/tmp/python_for_libwebrtc_build:$PATH ninja install
+           command: PATH=/tmp/python_for_libwebrtc_build:$PATH ninja package
        - run: 
-           name: Archive
-           command: cd /tmp/libwebrtc_install && 7z a libwebrtc.7z ./lib ./include
-       - store_artifacts:
-           path: /tmp/libwebrtc_install/libwebrtc.7z
+           name: Move artifacts
+           command: mv libwebrtc-*.tar.gz $CIRCLE_ARTIFACTS/
